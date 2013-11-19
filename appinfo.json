@@ -1,0 +1,69 @@
+{
+  "uuid": "8b2a2041-56c8-4b9d-af7b-e8894896d673",
+  "shortName": "Matrix Code 2.0",
+  "longName": "Matrix Code 2.0",
+  "companyName": "Jnm",
+  "versionCode": 2,
+  "versionLabel": "2.0",
+  "watchapp": {
+    "watchface": true
+  },
+  "appKeys": {},
+  "resources": {
+    "media": [
+      {
+        "menuIcon": true,
+        "type": "png",
+        "name": "IMAGE_MENU_ICON",
+        "file": "images/menu_icon.png"
+      },
+      {
+        "characterRegex": "[ 0-9a-zA-Z]",
+        "type": "font",
+        "name": "FONT_MATRIX_23",
+        "file": "fonts/MatrixCodeNFI-subset-with-uppercase.ttf"
+      },
+      {
+        "characterRegex": "[: 0-9]",
+        "type": "font",
+        "name": "FONT_SOURCECODE_23",
+        "file": "fonts/SourceCodePro-Semibold.ttf"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_B1",
+        "file": "images/b1.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_B2",
+        "file": "images/b2.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_B3",
+        "file": "images/b3.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_B4",
+        "file": "images/b4.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_B5",
+        "file": "images/b5.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_B6",
+        "file": "images/b6.png"
+      },
+      {
+        "type": "png",
+        "name": "IMAGE_B7",
+        "file": "images/b7.png"
+      }
+    ]
+  }
+}
