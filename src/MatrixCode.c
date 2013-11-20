@@ -1,8 +1,5 @@
 #include <pebble.h>
 
-#define STRAIGHT_DIGITS true
-#define BLINKING_SEMICOLON true
-
 #define SCREENW 144
 #define SCREENH 168
 #define CX 72
@@ -18,6 +15,11 @@ const int bmpId[NUM_BMP] = {
 };
 
 #define MAX_NEW_CELLS 3
+
+enum {
+	CONFIG_KEY_STRAIGHT = 0,
+	CONFIG_KEY_SEMICOLON = 1
+};
 
 Window *window;
 bool clock12;
@@ -49,6 +51,9 @@ char *uppers[] = {
 char *digits[] = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 char space[] = " ";
 char semicolon[] = ":";
+
+int straight_digits = 0;
+int blinking_semicolon = 0;
 
 static inline void set_random_seed(int32_t seed) {
 	rand_seed = (seed & 32767);
@@ -142,14 +147,47 @@ void handle_tick(struct tm *now, TimeUnits units_changed) {
 		setHour(now);
 	}
 	
-#if BLINKING_SEMICOLON
-	if (now->tm_sec%2) {
-		setCellEmpty(M_ROWS, M_COLS);
-	} else {
-		setCellSemiColon(M_ROWS, M_COLS);
+	if (blinking_semicolon) {
+		if (now->tm_sec%2) {
+			setCellEmpty(M_ROWS, M_COLS);
+		} else {
+			setCellSemiColon(M_ROWS, M_COLS);
+		}
 	}
-#endif
 	last = *now;
+}
+
+void readConfig() {
+	if (persist_exists(CONFIG_KEY_STRAIGHT)) {
+		straight_digits = persist_read_int(CONFIG_KEY_STRAIGHT);
+	} else {
+		straight_digits = 0;
+	}
+
+	if (persist_exists(CONFIG_KEY_SEMICOLON)) {
+		blinking_semicolon = persist_read_int(CONFIG_KEY_SEMICOLON);
+	} else {
+		blinking_semicolon = 0;
+	}
+}
+
+void applyConfig() {
+	int x;
+	MatrixCell *cell;
+	for (x=M_COLS-2; x<=M_COLS+2; x++) {
+		if (x != M_COLS) {
+			cell = &(cells[M_ROWS*NUM_COLS+x]);
+			if (straight_digits) {
+				text_layer_set_font(cell->textLayer, digitFont);
+			} else {
+				text_layer_set_font(cell->textLayer, matrixFont);
+			}
+		}
+	}
+	
+	if (!blinking_semicolon) {
+		setCellEmpty(M_ROWS, M_COLS);
+	}
 }
 
 void initCell(int col, int row) {
@@ -179,6 +217,30 @@ void deinitCell(int col, int row) {
 	text_layer_destroy(cell->textLayer);
 }
 
+void in_dropped_handler(AppMessageResult reason, void *context) {
+}
+
+void in_received_handler(DictionaryIterator *received, void *context) {
+	Tuple *straight = dict_find(received, CONFIG_KEY_STRAIGHT);
+	Tuple *semicolon = dict_find(received, CONFIG_KEY_SEMICOLON);
+	
+	if (straight && semicolon) {
+		persist_write_int(CONFIG_KEY_STRAIGHT, straight->value->int32);
+		persist_write_int(CONFIG_KEY_SEMICOLON, semicolon->value->int32);
+		
+		straight_digits = straight->value->int32;
+		blinking_semicolon = semicolon->value->int32;
+		
+		applyConfig();
+	}
+}
+
+static void app_message_init(void) {
+	app_message_register_inbox_received(in_received_handler);
+	app_message_register_inbox_dropped(in_dropped_handler);
+	app_message_open(64, 64);
+}
+
 void handle_init() {
 	int x, y;
 	MatrixCell *cell;
@@ -187,6 +249,10 @@ void handle_init() {
 	window_stack_push(window, true);
     window_set_background_color(window, GColorBlack);
     
+	app_message_init();
+	
+	readConfig();
+	
 	matrixFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_MATRIX_23));
 	digitFont = fonts_load_custom_font(resource_get_handle(RESOURCE_ID_FONT_SOURCECODE_23));
 	
@@ -215,9 +281,9 @@ void handle_init() {
 	for (x=M_COLS-2; x<=M_COLS+2; x++) {
 		cell = &(cells[M_ROWS*NUM_COLS+x]);
 		cell->step = -1;
-#if STRAIGHT_DIGITS
-		text_layer_set_font(cell->textLayer, digitFont);
-#endif
+		if (straight_digits) {
+			text_layer_set_font(cell->textLayer, digitFont);
+		}
 	}
 	// Set Font for the semicolon as the MatrixFont doesn't have it
 	text_layer_set_font(cells[M_ROWS*NUM_COLS+M_COLS].textLayer, digitFont);

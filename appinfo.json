@@ -4,11 +4,15 @@
   "longName": "Matrix Code 2.0",
   "companyName": "Jnm",
   "versionCode": 2,
-  "versionLabel": "2.0",
+  "versionLabel": "2.0.1",
   "watchapp": {
     "watchface": true
   },
-  "appKeys": {},
+  "capabilities": [ "configurable" ],
+  "appKeys": {
+    "straight": 0,
+    "semicolon": 1
+  },
   "resources": {
     "media": [
       {
