@@ -17,8 +17,8 @@ const int bmpId[NUM_BMP] = {
 #define MAX_NEW_CELLS 3
 
 enum {
-	CONFIG_KEY_STRAIGHT = 0,
-	CONFIG_KEY_SEMICOLON = 1
+	CONFIG_KEY_STRAIGHT = 20,
+	CONFIG_KEY_SEMICOLON = 21
 };
 
 Window *window;

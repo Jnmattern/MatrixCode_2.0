@@ -10,8 +10,8 @@
   },
   "capabilities": [ "configurable" ],
   "appKeys": {
-    "straight": 0,
-    "semicolon": 1
+    "straight": 20,
+    "semicolon": 21
   },
   "resources": {
     "media": [
