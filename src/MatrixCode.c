@@ -35,7 +35,7 @@ int dx, dy, cellWidth, cellHeight;
 GFont matrixFont, digitFont;
 int32_t rand_seed = 3;
 time_t now;
-struct tm last = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, "" };
+struct tm last = { -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1 };
 GBitmap *bmp[NUM_BMP];
 int M_ROWS = NUM_ROWS/2;
 int M_COLS = NUM_COLS/2;
